@@ -3,35 +3,435 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Undangan Pernikahan - Putri & Aldi</title>
-    <link rel="stylesheet" href="style.css">
+    <title>The Wedding of Sania & Agung</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
-    <section id="cover" class="d-flex align-items-center justify-content-center text-center">
-        <div class="content">
-            <h2 class="mb-4">Undangan Pernikahan</h2>
-            <h1 class="display-1">Putri & Aldi</h1>
-            <p class="mt-4">Kepada Bapak/Ibu/Saudara/i:</p>
-            <h3 id="nama-tamu">Nama Tamu</h3>
-            <button class="btn btn-primary mt-3" onclick="bukaUndangan()">Buka Undangan</button>
-        </div>
-    </section>
+    <style>
+        :root {
+            --primary-gold: #c6a87c;
+            --text-dark: #333333;
+            --bg-light: #f9f9f9;
+            --font-script: 'Great Vibes', cursive;
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Montserrat', sans-serif;
+        }
 
-    <main id="main-content" style="display:none;">
-        <section class="text-center py-5">
-            <h2>Save The Date</h2>
-            <div id="countdown" class="d-flex justify-content-center gap-3 mt-4">
-                </div>
-        </section>
+        body {
+            font-family: var(--font-sans);
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+            overflow-x: hidden; /* Mencegah scroll horizontal */
+        }
+
+        /* --- COVER UTAMA (LOCK SCREEN) --- */
+        #cover-section {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80');
+            background-size: cover;
+            background-position: center;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            transition: all 1s ease-in-out;
+        }
         
-        </main>
+        .cover-title { font-family: var(--font-script); font-size: 4rem; margin-bottom: 0; }
+        .cover-subtitle { font-family: var(--font-serif); letter-spacing: 3px; text-transform: uppercase; font-size: 1rem; margin-bottom: 20px; }
+        
+        .guest-info {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            padding: 20px 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.3);
+            margin-top: 20px;
+            max-width: 90%;
+        }
+
+        .btn-buka {
+            background-color: var(--primary-gold);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(198, 168, 124, 0.4);
+        }
+        .btn-buka:hover { background-color: #b08d55; transform: scale(1.05); }
+
+        /* --- NAVIGATION --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none; /* Hidden awal */
+            gap: 25px;
+        }
+        .bottom-nav a { color: #888; font-size: 1.2rem; transition: 0.3s; }
+        .bottom-nav a:hover, .bottom-nav a.active { color: var(--primary-gold); }
+
+        /* --- MUSIC CONTROL --- */
+        .music-box {
+            position: fixed; bottom: 100px; right: 20px; z-index: 1000;
+            background: white; width: 45px; height: 45px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer;
+            display: none; /* Hidden awal */
+        }
+        .spin { animation: spin 4s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- CONTENT STYLES --- */
+        section { padding: 80px 0; position: relative; }
+        .section-title {
+            font-family: var(--font-script);
+            font-size: 3.5rem;
+            color: var(--primary-gold);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .section-subtitle {
+            text-align: center;
+            font-family: var(--font-serif);
+            font-weight: bold;
+            font-size: 2rem;
+            margin-bottom: 40px;
+        }
+
+        /* Profil Mempelai */
+        .mempelai-img {
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            border: 5px solid var(--primary-gold);
+            padding: 5px;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+        .mempelai-name { font-family: var(--font-script); font-size: 2.5rem; color: var(--primary-gold); }
+        .btn-ig { 
+            background: #eee; color: #333; padding: 5px 15px; 
+            border-radius: 20px; font-size: 0.8rem; text-decoration: none; display: inline-block; margin-top: 10px; 
+        }
+
+        /* Countdown */
+        .countdown-box {
+            display: flex; justify-content: center; gap: 15px; margin-top: 30px;
+        }
+        .time-item {
+            background: var(--primary-gold); color: white;
+            width: 70px; height: 70px; border-radius: 10px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .time-item span { font-weight: bold; font-size: 1.5rem; line-height: 1; }
+        .time-item small { font-size: 0.7rem; }
+
+        /* Event Cards */
+        .event-card {
+            background: white; border-radius: 15px;
+            padding: 30px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-bottom: 5px solid var(--primary-gold);
+            margin-bottom: 20px;
+            height: 100%;
+        }
+
+        /* Gallery */
+        .gallery-img {
+            width: 100%; height: 250px; object-fit: cover;
+            border-radius: 10px; margin-bottom: 20px; transition: 0.3s; cursor: pointer;
+        }
+        .gallery-img:hover { transform: scale(1.02); }
+
+        /* Amplop / Gift */
+        .bank-card {
+            background: linear-gradient(45deg, #111, #333);
+            color: white; padding: 20px; border-radius: 15px;
+            text-align: left; max-width: 400px; margin: 0 auto 20px;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute; right: 20px; top: 20px;
+            background: rgba(255,255,255,0.2); border: none; color: white;
+            padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem;
+        }
+
+        /* Footer */
+        footer { background: var(--text-dark); color: #888; padding: 30px 0 80px; text-align: center; }
+    </style>
+</head>
+<body id="home">
 
     <audio id="bgm" loop>
-        <source src="musik.mp3" type="audio/mpeg">
+        <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
     </audio>
+    <div class="music-box" onclick="toggleMusic()">
+        <i class="fas fa-compact-disc" id="music-icon" style="font-size: 1.5rem;"></i>
+    </div>
 
-    <script src="script.js"></script>
+    <div id="cover-section">
+        <div class="container">
+            <h5 class="cover-subtitle" data-aos="fade-down">The Wedding Of</h5>
+            <h1 class="cover-title" data-aos="zoom-in" data-aos-delay="300">Sania & Agung</h1>
+            
+            <div class="guest-info" data-aos="fade-up" data-aos-delay="600">
+                <p class="mb-2">Kepada Bapak/Ibu/Saudara/i:</p>
+                <h3 id="nama-tamu" class="fw-bold mb-3">Tamu Undangan</h3>
+                <p class="small mb-3">Mohon maaf apabila ada kesalahan penulisan nama/gelar</p>
+                <button class="btn-buka" onclick="bukaUndangan()">
+                    <i class="fas fa-envelope-open me-2"></i> Buka Undangan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav" id="navbar">
+        <a href="#home"><i class="fas fa-home"></i></a>
+        <a href="#couple"><i class="fas fa-user-friends"></i></a>
+        <a href="#event"><i class="fas fa-calendar-alt"></i></a>
+        <a href="#gallery"><i class="fas fa-images"></i></a>
+        <a href="#rsvp"><i class="fas fa-comment-dots"></i></a>
+    </nav>
+
+    <main id="main-content" style="display:none;">
+        
+        <section class="text-center pt-5 pb-5">
+            <div class="container" data-aos="fade-up">
+                <img src="https://www.pngmart.com/files/16/Wedding-Flower-Decoration-Transparent-PNG.png" width="150" class="mb-4">
+                <p class="lead fst-italic">"Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya."</p>
+                <p class="fw-bold">(QS. Ar-Rum: 21)</p>
+            </div>
+        </section>
+
+        <section id="couple" style="background-color: white;">
+            <div class="container">
+                <h2 class="section-title" data-aos="fade-down">Mempelai</h2>
+                <div class="row justify-content-center align-items-center mt-5">
+                    <div class="col-md-5 text-center mb-5" data-aos="fade-right">
+                        <img src="https://images.unsplash.com/photo-1621621667797-e06afc217fb0?q=80" class="mempelai-img">
+                        <h3 class="mempelai-name">Sania Putri</h3>
+                        <p class="mb-1">Putri dari Bpk. Ahmad & Ibu Siti</p>
+                        <a href="#" class="btn-ig"><i class="fab fa-instagram"></i> @sania_putri</a>
+                    </div>
+                    
+                    <div class="col-md-2 text-center mb-5" data-aos="zoom-in">
+                        <h1 style="font-family: var(--font-script); font-size: 4rem; color: var(--primary-gold);">&</h1>
+                    </div>
+
+                    <div class="col-md-5 text-center mb-5" data-aos="fade-left">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80" class="mempelai-img">
+                        <h3 class="mempelai-name">Agung Wijaya</h3>
+                        <p class="mb-1">Putra dari Bpk. Budi & Ibu Rina</p>
+                        <a href="#" class="btn-ig"><i class="fab fa-instagram"></i> @agung_wijaya</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="event" style="background: url('https://www.transparenttextures.com/patterns/cubes.png');">
+            <div class="container">
+                <h2 class="section-title" data-aos="fade-up">Acara Pernikahan</h2>
+                <h3 class="section-subtitle" data-aos="fade-up">Minggu, 20 Oktober 2025</h3>
+
+                <div class="countdown-box mb-5" data-aos="zoom-in">
+                    <div class="time-item"><span id="hari">0</span><small>Hari</small></div>
+                    <div class="time-item"><span id="jam">0</span><small>Jam</small></div>
+                    <div class="time-item"><span id="menit">0</span><small>Menit</small></div>
+                    <div class="time-item"><span id="detik">0</span><small>Detik</small></div>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-md-5 mb-4" data-aos="fade-up">
+                        <div class="event-card">
+                            <i class="fas fa-handshake fa-3x mb-3 text-warning"></i>
+                            <h3>Akad Nikah</h3>
+                            <p class="fw-bold">08:00 WIB - 10:00 WIB</p>
+                            <p>Masjid Agung Al-Barkah<br>Jl. Veteran No. 1</p>
+                            <a href="https://goo.gl/maps/placeholder" target="_blank" class="btn btn-outline-warning btn-sm">Google Maps</a>
+                        </div>
+                    </div>
+                    <div class="col-md-5 mb-4" data-aos="fade-up" data-aos-delay="200">
+                        <div class="event-card">
+                            <i class="fas fa-glass-cheers fa-3x mb-3 text-warning"></i>
+                            <h3>Resepsi</h3>
+                            <p class="fw-bold">11:00 WIB - Selesai</p>
+                            <p>Ballroom Hotel Santika<br>Jl. Sudirman No. 45</p>
+                            <a href="https://goo.gl/maps/placeholder" target="_blank" class="btn btn-outline-warning btn-sm">Google Maps</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery" style="background: white;">
+            <div class="container">
+                <h2 class="section-title" data-aos="fade-down">Galeri Kami</h2>
+                <div class="row mt-5">
+                    <div class="col-md-4 col-6" data-aos="zoom-in"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80" class="gallery-img"></div>
+                    <div class="col-md-4 col-6" data-aos="zoom-in" data-aos-delay="100"><img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80" class="gallery-img"></div>
+                    <div class="col-md-4 col-6" data-aos="zoom-in" data-aos-delay="200"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80" class="gallery-img"></div>
+                    <div class="col-md-4 col-6" data-aos="zoom-in" data-aos-delay="300"><img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80" class="gallery-img"></div>
+                    <div class="col-md-4 col-6" data-aos="zoom-in" data-aos-delay="400"><img src="https://images.unsplash.com/photo-1520854221256-17451cc330e7?q=80" class="gallery-img"></div>
+                    <div class="col-md-4 col-6" data-aos="zoom-in" data-aos-delay="500"><img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80" class="gallery-img"></div>
+                </div>
+            </div>
+        </section>
+
+        <section style="background: var(--bg-light);">
+            <div class="container text-center">
+                <h2 class="section-title" data-aos="fade-up">Wedding Gift</h2>
+                <p class="mb-5" data-aos="fade-up">Doa Restu Anda merupakan karunia yang sangat berarti bagi kami. Dan jika memberi adalah ungkapan tanda kasih Anda, Anda dapat memberi kado secara cashless.</p>
+                
+                <div class="bank-card" data-aos="flip-up">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/2560px-Bank_Central_Asia.svg.png" width="80" style="background:white; padding:5px; border-radius:5px;">
+                    <button class="copy-btn" onclick="copyText('1234567890')">Salin</button>
+                    <h4 class="mt-3">1234 567 890</h4>
+                    <p class="mb-0">a.n Sania Putri</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="rsvp" style="background: white;">
+            <div class="container" style="max-width: 600px;">
+                <h2 class="section-title" data-aos="fade-down">RSVP & Ucapan</h2>
+                <div class="card p-4 shadow-sm border-0" data-aos="fade-up">
+                    <div class="mb-3">
+                        <label>Nama</label>
+                        <input type="text" id="sender-name" class="form-control" placeholder="Nama Anda">
+                    </div>
+                    <div class="mb-3">
+                        <label>Ucapan / Doa</label>
+                        <textarea id="sender-msg" class="form-control" rows="3" placeholder="Tulis ucapan..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label>Konfirmasi Kehadiran</label>
+                        <select id="attendance" class="form-control">
+                            <option value="Hadir">Hadir</option>
+                            <option value="Maaf, Belum Bisa Hadir">Maaf, Belum Bisa Hadir</option>
+                        </select>
+                    </div>
+                    <button onclick="kirimWA()" class="btn btn-success w-100"><i class="fab fa-whatsapp"></i> Kirim ke WhatsApp</button>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="container">
+                <h2 style="font-family: var(--font-script)">Sania & Agung</h2>
+                <p>Terima kasih atas doa & restu Bapak/Ibu/Saudara/i</p>
+                <small>&copy; 2025 Wedding Invitation. Created with love.</small>
+            </div>
+        </footer>
+
+    </main>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // 1. Inisialisasi Animasi AOS
+        AOS.init({ duration: 1000, once: true });
+
+        // 2. Ambil Nama Tamu dari URL (?to=...)
+        const urlParams = new URLSearchParams(window.location.search);
+        const to = urlParams.get('to');
+        const namaTamu = document.getElementById('nama-tamu');
+        const inputNama = document.getElementById('sender-name');
+        
+        if (to) {
+            // Mengganti tanda tambah (+) dengan spasi
+            const cleanName = to.replace(/\+/g, ' '); 
+            namaTamu.innerText = cleanName;
+            inputNama.value = cleanName; // Auto isi di form RSVP
+        }
+
+        // 3. Fungsi Buka Undangan (Efek Slide Up)
+        const cover = document.getElementById('cover-section');
+        const mainContent = document.getElementById('main-content');
+        const nav = document.getElementById('navbar');
+        const musicBox = document.querySelector('.music-box');
+        const bgm = document.getElementById('bgm');
+        const icon = document.getElementById('music-icon');
+
+        function bukaUndangan() {
+            cover.style.transform = 'translateY(-100%)'; // Geser ke atas
+            mainContent.style.display = 'block';
+            
+            setTimeout(() => {
+                nav.style.display = 'flex'; // Munculkan navigasi
+                musicBox.style.display = 'flex'; // Munculkan tombol musik
+                
+                // Putar Musik
+                bgm.play();
+                icon.classList.add('spin');
+            }, 500);
+        }
+
+        // 4. Kontrol Musik
+        function toggleMusic() {
+            if (bgm.paused) {
+                bgm.play();
+                icon.classList.add('spin');
+            } else {
+                bgm.pause();
+                icon.classList.remove('spin');
+            }
+        }
+
+        // 5. Hitung Mundur (Countdown)
+        // Set tanggal acara di sini (Format: Bulan Tanggal, Tahun Jam:Menit:Detik)
+        const targetDate = new Date("Oct 20, 2025 08:00:00").getTime();
+
+        setInterval(() => {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("hari").innerText = days;
+            document.getElementById("jam").innerText = hours;
+            document.getElementById("menit").innerText = minutes;
+            document.getElementById("detik").innerText = seconds;
+        }, 1000);
+
+        // 6. Fungsi Salin No Rekening
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            alert("Nomor Rekening berhasil disalin!");
+        }
+
+        // 7. Fungsi Kirim WhatsApp
+        function kirimWA() {
+            const nama = document.getElementById('sender-name').value;
+            const pesan = document.getElementById('sender-msg').value;
+            const hadir = document.getElementById('attendance').value;
+            
+            // Ganti nomor WA tujuan di sini (gunakan format internasional 628...)
+            const nomorWA = "6281234567890"; 
+            
+            const text = `Halo Sania & Agung,%0A%0ASaya ${nama} ingin mengkonfirmasi: *${hadir}*.%0A%0ADoa/Pesan:%0A${pesan}`;
+            window.open(`https://wa.me/${nomorWA}?text=${text}`, '_blank');
+        }
+    </script>
 </body>
 </html>
