@@ -1,437 +1,356 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Wedding of Sania & Agung</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-
+<div id="mg-wrapper" tabindex="0">
     <style>
-        :root {
-            --primary-gold: #c6a87c;
-            --text-dark: #333333;
-            --bg-light: #f9f9f9;
-            --font-script: 'Great Vibes', cursive;
-            --font-serif: 'Playfair Display', serif;
-            --font-sans: 'Montserrat', sans-serif;
-        }
-
-        body {
-            font-family: var(--font-sans);
-            color: var(--text-dark);
-            background-color: var(--bg-light);
-            overflow-x: hidden; /* Mencegah scroll horizontal */
-        }
-
-        /* --- COVER UTAMA (LOCK SCREEN) --- */
-        #cover-section {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100vh;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80');
-            background-size: cover;
-            background-position: center;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: white;
-            transition: all 1s ease-in-out;
-        }
-        
-        .cover-title { font-family: var(--font-script); font-size: 4rem; margin-bottom: 0; }
-        .cover-subtitle { font-family: var(--font-serif); letter-spacing: 3px; text-transform: uppercase; font-size: 1rem; margin-bottom: 20px; }
-        
-        .guest-info {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(5px);
-            padding: 20px 30px;
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.3);
-            margin-top: 20px;
-            max-width: 90%;
-        }
-
-        .btn-buka {
-            background-color: var(--primary-gold);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-weight: 600;
-            margin-top: 15px;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(198, 168, 124, 0.4);
-        }
-        .btn-buka:hover { background-color: #b08d55; transform: scale(1.05); }
-
-        /* --- NAVIGATION --- */
-        .bottom-nav {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.95);
-            padding: 10px 25px;
-            border-radius: 50px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            z-index: 1000;
-            display: none; /* Hidden awal */
-            gap: 25px;
-        }
-        .bottom-nav a { color: #888; font-size: 1.2rem; transition: 0.3s; }
-        .bottom-nav a:hover, .bottom-nav a.active { color: var(--primary-gold); }
-
-        /* --- MUSIC CONTROL --- */
-        .music-box {
-            position: fixed; bottom: 100px; right: 20px; z-index: 1000;
-            background: white; width: 45px; height: 45px; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer;
-            display: none; /* Hidden awal */
-        }
-        .spin { animation: spin 4s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        /* --- CONTENT STYLES --- */
-        section { padding: 80px 0; position: relative; }
-        .section-title {
-            font-family: var(--font-script);
-            font-size: 3.5rem;
-            color: var(--primary-gold);
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .section-subtitle {
-            text-align: center;
-            font-family: var(--font-serif);
-            font-weight: bold;
-            font-size: 2rem;
-            margin-bottom: 40px;
-        }
-
-        /* Profil Mempelai */
-        .mempelai-img {
-            width: 200px; height: 200px;
-            border-radius: 50%;
-            border: 5px solid var(--primary-gold);
-            padding: 5px;
-            object-fit: cover;
-            margin-bottom: 20px;
-        }
-        .mempelai-name { font-family: var(--font-script); font-size: 2.5rem; color: var(--primary-gold); }
-        .btn-ig { 
-            background: #eee; color: #333; padding: 5px 15px; 
-            border-radius: 20px; font-size: 0.8rem; text-decoration: none; display: inline-block; margin-top: 10px; 
-        }
-
-        /* Countdown */
-        .countdown-box {
-            display: flex; justify-content: center; gap: 15px; margin-top: 30px;
-        }
-        .time-item {
-            background: var(--primary-gold); color: white;
-            width: 70px; height: 70px; border-radius: 10px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-        }
-        .time-item span { font-weight: bold; font-size: 1.5rem; line-height: 1; }
-        .time-item small { font-size: 0.7rem; }
-
-        /* Event Cards */
-        .event-card {
-            background: white; border-radius: 15px;
-            padding: 30px; text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border-bottom: 5px solid var(--primary-gold);
-            margin-bottom: 20px;
-            height: 100%;
-        }
-
-        /* Gallery */
-        .gallery-img {
-            width: 100%; height: 250px; object-fit: cover;
-            border-radius: 10px; margin-bottom: 20px; transition: 0.3s; cursor: pointer;
-        }
-        .gallery-img:hover { transform: scale(1.02); }
-
-        /* Amplop / Gift */
-        .bank-card {
-            background: linear-gradient(45deg, #111, #333);
-            color: white; padding: 20px; border-radius: 15px;
-            text-align: left; max-width: 400px; margin: 0 auto 20px;
+        /* --- 1. SETUP TAMPILAN DASAR --- */
+        #mg-wrapper {
             position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #87CEEB; /* Warna Langit */
+            border: 4px solid #34495e;
+            border-radius: 10px;
+            overflow: hidden;
+            font-family: 'Segoe UI', sans-serif;
+            user-select: none;
+            outline: none; /* Hilangkan garis biru fokus */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            aspect-ratio: 16/9; /* Rasio Layar Lebar */
         }
-        .copy-btn {
-            position: absolute; right: 20px; top: 20px;
-            background: rgba(255,255,255,0.2); border: none; color: white;
-            padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem;
+        canvas { display: block; width: 100%; height: 100%; }
+
+        /* --- 2. LAYAR OVERLAY (Menu, Game Over, Soal) --- */
+        .mg-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: #fff; z-index: 50; text-align: center;
+        }
+        .mg-screen.active { display: flex; }
+
+        .mg-title { font-size: 28px; color: #f1c40f; margin-bottom: 10px; text-shadow: 2px 2px #d35400; font-weight: 800; }
+        .mg-btn {
+            background: #27ae60; color: white; border: none; padding: 12px 30px;
+            font-size: 16px; border-radius: 50px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px #1e8449; transition: 0.2s; margin-top: 15px;
+        }
+        .mg-btn:active { transform: scale(0.95); }
+
+        /* --- 3. HUD (Skor & Nyawa) --- */
+        #mg-hud {
+            position: absolute; top: 15px; left: 15px;
+            background: rgba(0,0,0,0.6); padding: 8px 15px;
+            border-radius: 20px; color: white; font-weight: bold; font-size: 14px;
+            z-index: 10; display: flex; gap: 15px; pointer-events: none;
+        }
+        #hud-lif { color: #e74c3c; font-size: 16px; } /* Warna Merah Hati */
+
+        /* --- 4. POPUP SOAL MATEMATIKA --- */
+        .mg-box {
+            background: #fff; padding: 20px; border-radius: 10px;
+            width: 90%; max-width: 320px; border-bottom: 5px solid #bdc3c7;
+        }
+        .mg-input {
+            width: 100%; padding: 10px; font-size: 24px; text-align: center;
+            margin: 10px 0; border: 2px solid #3498db; border-radius: 5px; color: #2c3e50; font-weight: bold;
+        }
+        .mg-numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+        .mg-key {
+            padding: 15px; background: #34495e; color: white; font-size: 18px; font-weight:bold;
+            border: none; border-radius: 5px; cursor: pointer;
+        }
+        .mg-key:active { background: #2c3e50; }
+
+        /* --- 5. KONTROL KHUSUS HP (TOUCH) --- */
+        #mg-touch {
+            position: absolute; bottom: 5px; width: 100%; padding: 0 5px;
+            display: flex; justify-content: space-between; z-index: 40;
+        }
+        .mg-tbtn .mg-tbtn {
+            /* RUMUS SAKTI: clamp(Minimal, Ideal, Maksimal) */
+            
+            /* Lebar: Minimal 55px, Idealnya 18% lebar layar, Maksimal 90px */
+            width: clamp(55px, 18vw, 90px);
+            
+            /* Tinggi: Sama dengan lebar agar bulat */
+            height: clamp(55px, 18vw, 90px);
+            
+            /* Ukuran Panah: Menyesuaikan juga */
+            font-size: clamp(24px, 8vw, 40px);
+
+            background: rgba(255,255,255,0.25);
+            border: 2px solid rgba(255,255,255,0.8); 
+            border-radius: 50%; 
+            color: white;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(4px); 
+            user-select: none;
+            
+            /* Agar tombol tidak terlalu mepet bawah */
+            margin-bottom: 10px; 
+            
+            /* Efek bayangan agar terlihat timbul */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .mg-tbtn:active { background: rgba(255,255,255,0.5); transform: scale(0.9); }
+
+        /* --- 6. PETUNJUK KHUSUS PC --- */
+        #mg-pc-hint {
+            position: absolute; bottom: 10px; width: 100%; text-align: center;
+            color: rgba(255,255,255,0.7); font-size: 12px; pointer-events: none;
+            display: none; /* Sembunyi default */
+            text-shadow: 1px 1px 2px black;
         }
 
-        /* Footer */
-        footer { background: var(--text-dark); color: #888; padding: 30px 0 80px; text-align: center; }
+        /* --- 7. LOGIKA OTOMATIS (MEDIA QUERY) --- */
+        /* Jika layar mendukung mouse (PC/Laptop), sembunyikan tombol sentuh, munculkan teks PC */
+        @media (pointer: fine) {
+            #mg-touch { display: none !important; }
+            #mg-pc-hint { display: block !important; }
+        }
     </style>
-</head>
-<body id="home">
 
-    <audio id="bgm" loop>
-        <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
-    </audio>
-    <div class="music-box" onclick="toggleMusic()">
-        <i class="fas fa-compact-disc" id="music-icon" style="font-size: 1.5rem;"></i>
+    <canvas id="mg-canvas"></canvas>
+
+    <div id="mg-hud">
+        <span>LVL: <span id="val-lvl">1</span></span>
+        <span>SKOR: <span id="val-scr">0</span></span>
+        <span style="color:#f1c40f">WAKTU: <span id="val-tm">30</span></span>
+        <span id="hud-lif"></span> </div>
+
+    <div id="scr-start" class="mg-screen active">
+        <h2 class="mg-title">MATH HERO</h2>
+        <p>Jawab Soal & Hindari Duri!</p>
+      <p>Alihkan Ke Mode Landscape/Mode Desktop<p>
+        <button class="mg-btn" onclick="Game.start()">▶ MULAI MAIN</button>
     </div>
 
-    <div id="cover-section">
-        <div class="container">
-            <h5 class="cover-subtitle" data-aos="fade-down">The Wedding Of</h5>
-            <h1 class="cover-title" data-aos="zoom-in" data-aos-delay="300">Sania & Agung</h1>
-            
-            <div class="guest-info" data-aos="fade-up" data-aos-delay="600">
-                <p class="mb-2">Kepada Bapak/Ibu/Saudara/i:</p>
-                <h3 id="nama-tamu" class="fw-bold mb-3">Tamu Undangan</h3>
-                <p class="small mb-3">Mohon maaf apabila ada kesalahan penulisan nama/gelar</p>
-                <button class="btn-buka" onclick="bukaUndangan()">
-                    <i class="fas fa-envelope-open me-2"></i> Buka Undangan
-                </button>
+    <div id="scr-math" class="mg-screen">
+        <div class="mg-box">
+            <h3 id="q-txt" style="color:#333; margin:0">?</h3>
+            <p id="q-sub" style="color:#7f8c8d; font-size:12px; margin:5px">...</p>
+            <input type="text" id="q-inp" class="mg-input" readonly placeholder="?">
+            <div class="mg-numpad">
+                <button class="mg-key" onclick="Game.in(1)">1</button><button class="mg-key" onclick="Game.in(2)">2</button><button class="mg-key" onclick="Game.in(3)">3</button>
+                <button class="mg-key" onclick="Game.in(4)">4</button><button class="mg-key" onclick="Game.in(5)">5</button><button class="mg-key" onclick="Game.in(6)">6</button>
+                <button class="mg-key" onclick="Game.in(7)">7</button><button class="mg-key" onclick="Game.in(8)">8</button><button class="mg-key" onclick="Game.in(9)">9</button>
+                <button class="mg-key" onclick="Game.in(0)">0</button><button class="mg-key" onclick="Game.del()" style="background:#c0392b">DEL</button><button class="mg-key" onclick="Game.ok()" style="background:#2980b9">OK</button>
             </div>
         </div>
     </div>
 
-    <nav class="bottom-nav" id="navbar">
-        <a href="#home"><i class="fas fa-home"></i></a>
-        <a href="#couple"><i class="fas fa-user-friends"></i></a>
-        <a href="#event"><i class="fas fa-calendar-alt"></i></a>
-        <a href="#gallery"><i class="fas fa-images"></i></a>
-        <a href="#rsvp"><i class="fas fa-comment-dots"></i></a>
-    </nav>
+    <div id="scr-end" class="mg-screen">
+        <h2 class="mg-title">GAME OVER</h2>
+        <p>Skor Akhir: <span id="end-scr" style="font-weight:bold; color:#f1c40f">0</span></p>
+        <button class="mg-btn" onclick="Game.start()">COBA LAGI ↺</button>
+    </div>
 
-    <main id="main-content" style="display:none;">
-        
-        <section class="text-center pt-5 pb-5">
-            <div class="container" data-aos="fade-up">
-                <img src="https://www.pngmart.com/files/16/Wedding-Flower-Decoration-Transparent-PNG.png" width="150" class="mb-4">
-                <p class="lead fst-italic">"Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya."</p>
-                <p class="fw-bold">(QS. Ar-Rum: 21)</p>
-            </div>
-        </section>
+    <div id="mg-touch">
+        <div style="display:flex; gap:15px">
+            <div id="btn-l" class="mg-tbtn">◄</div>
+            <div id="btn-r" class="mg-tbtn">►</div>
+        </div>
+        <div id="btn-j" class="mg-tbtn" style="background:rgba(241,196,15,0.4); border-color:#f1c40f;">▲</div>
+    </div>
 
-        <section id="couple" style="background-color: white;">
-            <div class="container">
-                <h2 class="section-title" data-aos="fade-down">Mempelai</h2>
-                <div class="row justify-content-center align-items-center mt-5">
-                    <div class="col-md-5 text-center mb-5" data-aos="fade-right">
-                        <img src="https://images.unsplash.com/photo-1621621667797-e06afc217fb0?q=80" class="mempelai-img">
-                        <h3 class="mempelai-name">Sania Putri</h3>
-                        <p class="mb-1">Putri dari Bpk. Ahmad & Ibu Siti</p>
-                        <a href="#" class="btn-ig"><i class="fab fa-instagram"></i> @sania_putri</a>
-                    </div>
-                    
-                    <div class="col-md-2 text-center mb-5" data-aos="zoom-in">
-                        <h1 style="font-family: var(--font-script); font-size: 4rem; color: var(--primary-gold);">&</h1>
-                    </div>
+    <div id="mg-pc-hint">Gunakan <b>Panah Kiri/Kanan</b> untuk jalan, <b>Spasi/Panah Atas</b> untuk lompat</div>
 
-                    <div class="col-md-5 text-center mb-5" data-aos="fade-left">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80" class="mempelai-img">
-                        <h3 class="mempelai-name">Agung Wijaya</h3>
-                        <p class="mb-1">Putra dari Bpk. Budi & Ibu Rina</p>
-                        <a href="#" class="btn-ig"><i class="fab fa-instagram"></i> @agung_wijaya</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="event" style="background: url('https://www.transparenttextures.com/patterns/cubes.png');">
-            <div class="container">
-                <h2 class="section-title" data-aos="fade-up">Acara Pernikahan</h2>
-                <h3 class="section-subtitle" data-aos="fade-up">Minggu, 20 Oktober 2025</h3>
-
-                <div class="countdown-box mb-5" data-aos="zoom-in">
-                    <div class="time-item"><span id="hari">0</span><small>Hari</small></div>
-                    <div class="time-item"><span id="jam">0</span><small>Jam</small></div>
-                    <div class="time-item"><span id="menit">0</span><small>Menit</small></div>
-                    <div class="time-item"><span id="detik">0</span><small>Detik</small></div>
-                </div>
-
-                <div class="row justify-content-center">
-                    <div class="col-md-5 mb-4" data-aos="fade-up">
-                        <div class="event-card">
-                            <i class="fas fa-handshake fa-3x mb-3 text-warning"></i>
-                            <h3>Akad Nikah</h3>
-                            <p class="fw-bold">08:00 WIB - 10:00 WIB</p>
-                            <p>Masjid Agung Al-Barkah<br>Jl. Veteran No. 1</p>
-                            <a href="https://goo.gl/maps/placeholder" target="_blank" class="btn btn-outline-warning btn-sm">Google Maps</a>
-                        </div>
-                    </div>
-                    <div class="col-md-5 mb-4" data-aos="fade-up" data-aos-delay="200">
-                        <div class="event-card">
-                            <i class="fas fa-glass-cheers fa-3x mb-3 text-warning"></i>
-                            <h3>Resepsi</h3>
-                            <p class="fw-bold">11:00 WIB - Selesai</p>
-                            <p>Ballroom Hotel Santika<br>Jl. Sudirman No. 45</p>
-                            <a href="https://goo.gl/maps/placeholder" target="_blank" class="btn btn-outline-warning btn-sm">Google Maps</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="gallery" style="background: white;">
-            <div class="container">
-                <h2 class="section-title" data-aos="fade-down">Galeri Kami</h2>
-                <div class="row mt-5">
-                    <div class="col-md-4 col-6" data-aos="zoom-in"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80" class="gallery-img"></div>
-                    <div class="col-md-4 col-6" data-aos="zoom-in" data-aos-delay="100"><img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80" class="gallery-img"></div>
-                    <div class="col-md-4 col-6" data-aos="zoom-in" data-aos-delay="200"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80" class="gallery-img"></div>
-                    <div class="col-md-4 col-6" data-aos="zoom-in" data-aos-delay="300"><img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80" class="gallery-img"></div>
-                    <div class="col-md-4 col-6" data-aos="zoom-in" data-aos-delay="400"><img src="https://images.unsplash.com/photo-1520854221256-17451cc330e7?q=80" class="gallery-img"></div>
-                    <div class="col-md-4 col-6" data-aos="zoom-in" data-aos-delay="500"><img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80" class="gallery-img"></div>
-                </div>
-            </div>
-        </section>
-
-        <section style="background: var(--bg-light);">
-            <div class="container text-center">
-                <h2 class="section-title" data-aos="fade-up">Wedding Gift</h2>
-                <p class="mb-5" data-aos="fade-up">Doa Restu Anda merupakan karunia yang sangat berarti bagi kami. Dan jika memberi adalah ungkapan tanda kasih Anda, Anda dapat memberi kado secara cashless.</p>
-                
-                <div class="bank-card" data-aos="flip-up">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/2560px-Bank_Central_Asia.svg.png" width="80" style="background:white; padding:5px; border-radius:5px;">
-                    <button class="copy-btn" onclick="copyText('1234567890')">Salin</button>
-                    <h4 class="mt-3">1234 567 890</h4>
-                    <p class="mb-0">a.n Sania Putri</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="rsvp" style="background: white;">
-            <div class="container" style="max-width: 600px;">
-                <h2 class="section-title" data-aos="fade-down">RSVP & Ucapan</h2>
-                <div class="card p-4 shadow-sm border-0" data-aos="fade-up">
-                    <div class="mb-3">
-                        <label>Nama</label>
-                        <input type="text" id="sender-name" class="form-control" placeholder="Nama Anda">
-                    </div>
-                    <div class="mb-3">
-                        <label>Ucapan / Doa</label>
-                        <textarea id="sender-msg" class="form-control" rows="3" placeholder="Tulis ucapan..."></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label>Konfirmasi Kehadiran</label>
-                        <select id="attendance" class="form-control">
-                            <option value="Hadir">Hadir</option>
-                            <option value="Maaf, Belum Bisa Hadir">Maaf, Belum Bisa Hadir</option>
-                        </select>
-                    </div>
-                    <button onclick="kirimWA()" class="btn btn-success w-100"><i class="fab fa-whatsapp"></i> Kirim ke WhatsApp</button>
-                </div>
-            </div>
-        </section>
-
-        <footer>
-            <div class="container">
-                <h2 style="font-family: var(--font-script)">Sania & Agung</h2>
-                <p>Terima kasih atas doa & restu Bapak/Ibu/Saudara/i</p>
-                <small>&copy; 2025 Wedding Invitation. Created with love.</small>
-            </div>
-        </footer>
-
-    </main>
-
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // 1. Inisialisasi Animasi AOS
-        AOS.init({ duration: 1000, once: true });
+    var Game = (function() {
+        // --- AUDIO ENGINE ---
+        const Snd = {
+            ctx: null, bgm: null,
+            init: function() {
+                window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                if(!this.ctx) this.ctx = new AudioContext();
+                if(this.ctx.state === 'suspended') this.ctx.resume();
+            },
+            play: function(f, t, d, v=0.1) {
+                if(!this.ctx) return;
+                const o=this.ctx.createOscillator(), g=this.ctx.createGain();
+                o.type=t; o.frequency.value=f;
+                g.gain.setValueAtTime(v, this.ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime+d);
+                o.connect(g); g.connect(this.ctx.destination);
+                o.start(); o.stop(this.ctx.currentTime+d);
+            },
+            sfx: {
+                jump: ()=> Snd.play(200,'square',0.1),
+                coin: ()=> { Snd.play(1000,'square',0.1); setTimeout(()=>Snd.play(1500,'square',0.15),80); },
+                hit: ()=> Snd.play(100,'sawtooth',0.3,0.2),
+                win: ()=> [400,500,600,800].forEach((f,i)=>setTimeout(()=>Snd.play(f,'square',0.2),i*150))
+            },
+            music: function(on) {
+                if(this.bgm) clearInterval(this.bgm);
+                if(on) {
+                    let n=[330,330,392,262], i=0;
+                    this.bgm = setInterval(()=>{ if(state=='PLAY') { Snd.play(n[i],'triangle',0.2,0.03); i=(i+1)%n.length; } }, 300);
+                }
+            }
+        };
 
-        // 2. Ambil Nama Tamu dari URL (?to=...)
-        const urlParams = new URLSearchParams(window.location.search);
-        const to = urlParams.get('to');
-        const namaTamu = document.getElementById('nama-tamu');
-        const inputNama = document.getElementById('sender-name');
+        // --- GAME LOGIC ---
+        const cvs = document.getElementById('mg-canvas');
+        const ctx = cvs.getContext('2d');
+        const wrap = document.getElementById('mg-wrapper');
+        let GW=800, GH=450;
+        let state='MENU', lvl=1, scr=0, lif=3, time=30, tick=0;
+        let p = {x:50, y:300, w:30, h:30, vx:0, vy:0, g:false};
+        let keys = {l:false, r:false};
+        let math = {ans:0, str:"", rem:0};
+
+        // 5 Level Data
+        const lvls = [
+            { p:[{x:0,y:400,w:800,h:50},{x:300,y:320,w:200,h:20}], h:[], t:{x:720,y:350,k:'EXIT'}, d:2 },
+            { p:[{x:0,y:400,w:200,h:50},{x:250,y:350,w:100,h:20},{x:400,y:300,w:100,h:20},{x:600,y:400,w:200,h:50}], h:[], t:{x:750,y:350,k:'EXIT'}, d:4 },
+            { p:[{x:0,y:400,w:150,h:50},{x:200,y:300,w:80,h:20},{x:400,y:300,w:80,h:20},{x:600,y:400,w:200,h:50}], h:[{x:150,y:430,w:450,h:20}], t:{x:750,y:350,k:'EXIT'}, d:6 },
+            { p:[{x:0,y:400,w:100,h:50},{x:150,y:300,w:60,h:20},{x:300,y:220,w:60,h:20},{x:450,y:300,w:60,h:20},{x:650,y:400,w:150,h:50}], h:[{x:100,y:430,w:550,h:20}], t:{x:720,y:350,k:'EXIT'}, d:8 },
+            { p:[{x:0,y:400,w:800,h:50},{x:100,y:280,w:150,h:20},{x:550,y:280,w:150,h:20}], h:[], t:{x:350,y:200,k:'BOSS'}, d:10 }
+        ];
+
+        function resize() { cvs.width=GW; cvs.height=GH; }
         
-        if (to) {
-            // Mengganti tanda tambah (+) dengan spasi
-            const cleanName = to.replace(/\+/g, ' '); 
-            namaTamu.innerText = cleanName;
-            inputNama.value = cleanName; // Auto isi di form RSVP
+        function loop() {
+    if(state !== 'PLAY') return;
+    
+    // --- TAMBAHKAN KODE INI ---
+    tick++;
+    if(tick >= 30) { // Asumsi game berjalan 60 FPS, maka 60 frame = 1 detik
+        tick = 0;
+        time--;
+        updHUD(); // Update tampilan angka
+        if(time <= 0) die(); // Jika waktu habis, panggil fungsi mati
+    }
+    // --------------------------
+
+    ctx.clearRect(0,0,GW,GH);
+    // ... (kode sisanya biarkan sama)
+            // Move
+            if(keys.r) p.vx+=0.8; if(keys.l) p.vx-=0.8;
+            p.vx*=0.85; p.vy+=0.8; p.x+=p.vx; p.y+=p.vy;
+
+            // Draw Level
+            let l = lvls[lvl-1]; p.g=false;
+            ctx.fillStyle = '#27ae60'; // Platform
+            l.p.forEach(b => {
+                ctx.fillRect(b.x, b.y, b.w, b.h);
+                if(p.x<b.x+b.w && p.x+p.w>b.x && p.y<b.y+b.h && p.y+p.h>b.y) {
+                    if(p.vy>=0 && p.y+p.h-p.vy<=b.y+20) { p.g=true; p.vy=0; p.y=b.y-p.h; }
+                    else if(p.vy<0 && p.y-p.vy>=b.y+b.h) { p.vy=0; p.y=b.y+b.h; }
+                }
+            });
+
+            // Hazards
+            ctx.fillStyle = '#c0392b';
+            l.h.forEach(h => {
+                ctx.fillRect(h.x, h.y, h.w, h.h);
+                if(p.x<h.x+h.w && p.x+p.w>h.x && p.y<h.y+h.h && p.y+p.h>h.y) die();
+            });
+
+            // Trigger
+            let tr = l.t;
+            ctx.fillStyle = tr.k=='EXIT'?'#f1c40f':'#9b59b6';
+            ctx.fillRect(tr.x, tr.y, 40, 50);
+            ctx.fillStyle = '#fff'; ctx.font='10px Arial'; ctx.fillText(tr.k=='EXIT'?'GO':'BOSS', tr.x+5, tr.y-10);
+
+            if(p.x<tr.x+40 && p.x+p.w>tr.x && p.y<tr.y+50 && p.y+p.h>tr.y) {
+                p.vx=0; p.x-=40; startMath(tr.k=='EXIT'?1:5);
+            }
+
+            // Player
+            ctx.fillStyle = '#2980b9'; ctx.fillRect(p.x, p.y, p.w, p.h);
+            ctx.fillStyle = '#fff'; ctx.fillRect(p.vx>=0?p.x+20:p.x+5, p.y+5, 5, 5); // Mata
+
+            if(p.y>GH) die();
+            if(p.x<0) p.x=0; if(p.x>GW-p.w) p.x=GW-p.w;
+
+            requestAnimationFrame(loop);
         }
 
-        // 3. Fungsi Buka Undangan (Efek Slide Up)
-        const cover = document.getElementById('cover-section');
-        const mainContent = document.getElementById('main-content');
-        const nav = document.getElementById('navbar');
-        const musicBox = document.querySelector('.music-box');
-        const bgm = document.getElementById('bgm');
-        const icon = document.getElementById('music-icon');
-
-        function bukaUndangan() {
-            cover.style.transform = 'translateY(-100%)'; // Geser ke atas
-            mainContent.style.display = 'block';
-            
-            setTimeout(() => {
-                nav.style.display = 'flex'; // Munculkan navigasi
-                musicBox.style.display = 'flex'; // Munculkan tombol musik
-                
-                // Putar Musik
-                bgm.play();
-                icon.classList.add('spin');
-            }, 500);
-        }
-
-        // 4. Kontrol Musik
-        function toggleMusic() {
-            if (bgm.paused) {
-                bgm.play();
-                icon.classList.add('spin');
-            } else {
-                bgm.pause();
-                icon.classList.remove('spin');
+        function die() {
+            lif--; Snd.sfx.hit(); updHUD(); p.x=50; p.y=300; p.vx=0; p.vy=0;
+            if(lif<=0) {
+                state='END'; Snd.music(false);
+                document.getElementById('end-scr').innerText = scr;
+                document.getElementById('scr-end').classList.add('active');
             }
         }
 
-        // 5. Hitung Mundur (Countdown)
-        // Set tanggal acara di sini (Format: Bulan Tanggal, Tahun Jam:Menit:Detik)
-        const targetDate = new Date("Oct 20, 2025 08:00:00").getTime();
-
-        setInterval(() => {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
-
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById("hari").innerText = days;
-            document.getElementById("jam").innerText = hours;
-            document.getElementById("menit").innerText = minutes;
-            document.getElementById("detik").innerText = seconds;
-        }, 1000);
-
-        // 6. Fungsi Salin No Rekening
-        function copyText(text) {
-            navigator.clipboard.writeText(text);
-            alert("Nomor Rekening berhasil disalin!");
+        function startMath(c) {
+            state='MATH'; math.rem=c; genQ();
+            document.getElementById('scr-math').classList.add('active');
+        }
+        function genQ() {
+            let d = lvls[lvl-1].d;
+            let a=Math.floor(Math.random()*d)+2, b=Math.floor(Math.random()*9)+2;
+            math.ans = a*b; math.str = "";
+            document.getElementById('q-txt').innerText = `${a} x ${b} = ?`;
+            document.getElementById('q-inp').value = "";
+            document.getElementById('q-sub').innerText = math.rem>1 ? `BOSS HP: ${math.rem}` : "Jawab untuk lanjut!";
+        }
+        function updHUD() {
+            document.getElementById('val-lvl').innerText = lvl;
+            document.getElementById('val-scr').innerText = scr;
+            document.getElementById('val-tm').innerText = time;
+            // Gunakan Unicode untuk Love agar aman
+            document.getElementById('hud-lif').innerText = "\u2764".repeat(lif);
         }
 
-        // 7. Fungsi Kirim WhatsApp
-        function kirimWA() {
-            const nama = document.getElementById('sender-name').value;
-            const pesan = document.getElementById('sender-msg').value;
-            const hadir = document.getElementById('attendance').value;
-            
-            // Ganti nomor WA tujuan di sini (gunakan format internasional 628...)
-            const nomorWA = "6281234567890"; 
-            
-            const text = `Halo Sania & Agung,%0A%0ASaya ${nama} ingin mengkonfirmasi: *${hadir}*.%0A%0ADoa/Pesan:%0A${pesan}`;
-            window.open(`https://wa.me/${nomorWA}?text=${text}`, '_blank');
-        }
+        return {
+            start: function() {
+                wrap.focus(); Snd.init(); Snd.music(true);
+                lvl=1; scr=0; lif=3; time=30; tick=0; p.x=50; p.y=300;
+                document.querySelectorAll('.mg-screen').forEach(e=>e.classList.remove('active'));
+                state='PLAY'; updHUD(); resize(); loop();
+            },
+            in: function(n) { if(math.str.length<3){math.str+=n; document.getElementById('q-inp').value=math.str;} },
+            del: function() { math.str=math.str.slice(0,-1); document.getElementById('q-inp').value=math.str; },
+            ok: function() {
+                if(parseInt(math.str) === math.ans) {
+                    scr+=10; math.rem--; Snd.sfx.coin();
+                    if(math.rem<=0) {
+                        document.getElementById('scr-math').classList.remove('active');
+                        lvl++; wrap.focus();
+                        time = 30;
+                        if(lvl>5) {
+                            state='END'; Snd.music(false); Snd.sfx.win();
+                            document.getElementById('end-scr').innerText = scr;
+                            document.querySelector('#scr-end h2').innerText = "MENANG SEMPURNA!";
+                            document.getElementById('scr-end').classList.add('active');
+                        } else { state='PLAY'; p.x=50; p.y=300; loop(); }
+                    } else { scr+=5; genQ(); }
+                } else {
+                    document.getElementById('scr-math').classList.remove('active');
+                    wrap.focus(); die(); if(lif>0){ state='PLAY'; loop(); }
+                }
+                updHUD();
+            },
+            bind: function() {
+                wrap.addEventListener('click', ()=>wrap.focus());
+                window.addEventListener('keydown', e=>{
+                    if(state=='PLAY') {
+                        if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key) && document.activeElement===wrap) e.preventDefault();
+                        if(e.key=='ArrowRight') keys.r=true;
+                        if(e.key=='ArrowLeft') keys.l=true;
+                        if(e.key==' '||e.key=='ArrowUp') if(p.g){p.vy=-20;p.g=false;Snd.sfx.jump();}
+                    }
+                });
+                window.addEventListener('keyup', e=>{
+                    if(e.key=='ArrowRight') keys.r=false;
+                    if(e.key=='ArrowLeft') keys.l=false;
+                });
+                const tB = (id,k,j)=>{
+                    let el=document.getElementById(id);
+                    if(el) {
+                        el.addEventListener('touchstart', e=>{e.preventDefault(); if(j&&p.g){p.vy=-20;p.g=false;Snd.sfx.jump();}else keys[k]=true;});
+                        el.addEventListener('touchend', e=>{e.preventDefault(); if(!j)keys[k]=false;});
+                    }
+                }
+                tB('btn-l','l'); tB('btn-r','r'); tB('btn-j','u',true);
+            }
+        };
+    })();
+
+    setTimeout(Game.bind, 500);
     </script>
-</body>
-</html>
+</div>
