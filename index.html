@@ -1,33 +1,27 @@
-<div id="mg-wrapper" tabindex="0">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Math Hero Game</title>
     <style>
         /* --- 1. SETUP TAMPILAN DASAR --- */
+        body { margin: 0; padding: 0; background: #2c3e50; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Segoe UI', sans-serif; }
         #mg-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #87CEEB; /* Warna Langit */
-            border: 4px solid #34495e;
-            border-radius: 10px;
-            overflow: hidden;
-            font-family: 'Segoe UI', sans-serif;
-            user-select: none;
-            outline: none; /* Hilangkan garis biru fokus */
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            aspect-ratio: 16/9; /* Rasio Layar Lebar */
+            position: relative; width: 100%; max-width: 800px; 
+            background-color: #87CEEB; border: 4px solid #34495e; border-radius: 10px;
+            overflow: hidden; user-select: none; outline: none; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            aspect-ratio: 16/9;
         }
         canvas { display: block; width: 100%; height: 100%; }
 
-        /* --- 2. LAYAR OVERLAY (Menu, Game Over, Soal) --- */
+        /* --- 2. LAYAR OVERLAY --- */
         .mg-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            display: none; flex-direction: column;
-            align-items: center; justify-content: center;
-            color: #fff; z-index: 50; text-align: center;
+            background: rgba(0,0,0,0.85); display: none; flex-direction: column;
+            align-items: center; justify-content: center; color: #fff; z-index: 50; text-align: center;
         }
         .mg-screen.active { display: flex; }
-
         .mg-title { font-size: 28px; color: #f1c40f; margin-bottom: 10px; text-shadow: 2px 2px #d35400; font-weight: 800; }
         .mg-btn {
             background: #27ae60; color: white; border: none; padding: 12px 30px;
@@ -36,14 +30,14 @@
         }
         .mg-btn:active { transform: scale(0.95); }
 
-        /* --- 3. HUD (Skor & Nyawa) --- */
+        /* --- 3. HUD (Skor, Waktu, Nyawa) --- */
         #mg-hud {
-            position: absolute; top: 15px; left: 15px;
+            position: absolute; top: 15px; left: 15px; right: 15px;
             background: rgba(0,0,0,0.6); padding: 8px 15px;
             border-radius: 20px; color: white; font-weight: bold; font-size: 14px;
-            z-index: 10; display: flex; gap: 15px; pointer-events: none;
+            z-index: 10; display: flex; justify-content: space-between; pointer-events: none;
         }
-        #hud-lif { color: #e74c3c; font-size: 16px; } /* Warna Merah Hati */
+        #hud-lif { color: #e74c3c; font-size: 16px; letter-spacing: 2px; }
 
         /* --- 4. POPUP SOAL MATEMATIKA --- */
         .mg-box {
@@ -51,7 +45,7 @@
             width: 90%; max-width: 320px; border-bottom: 5px solid #bdc3c7;
         }
         .mg-input {
-            width: 100%; padding: 10px; font-size: 24px; text-align: center;
+            width: 100%; padding: 10px; font-size: 24px; text-align: center; box-sizing: border-box;
             margin: 10px 0; border: 2px solid #3498db; border-radius: 5px; color: #2c3e50; font-weight: bold;
         }
         .mg-numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
@@ -61,67 +55,48 @@
         }
         .mg-key:active { background: #2c3e50; }
 
-        /* --- 5. KONTROL KHUSUS HP (TOUCH) --- */
+        /* --- 5. KONTROL TOUCH --- */
         #mg-touch {
-            position: absolute; bottom: 5px; width: 100%; padding: 0 5px;
+            position: absolute; bottom: 15px; width: 100%; padding: 0 20px; box-sizing: border-box;
             display: flex; justify-content: space-between; z-index: 40;
         }
-        .mg-tbtn .mg-tbtn {
-            /* RUMUS SAKTI: clamp(Minimal, Ideal, Maksimal) */
-            
-            /* Lebar: Minimal 55px, Idealnya 18% lebar layar, Maksimal 90px */
-            width: clamp(55px, 18vw, 90px);
-            
-            /* Tinggi: Sama dengan lebar agar bulat */
-            height: clamp(55px, 18vw, 90px);
-            
-            /* Ukuran Panah: Menyesuaikan juga */
-            font-size: clamp(24px, 8vw, 40px);
-
-            background: rgba(255,255,255,0.25);
-            border: 2px solid rgba(255,255,255,0.8); 
-            border-radius: 50%; 
-            color: white;
+        .mg-tbtn {
+            width: 60px; height: 60px; background: rgba(255,255,255,0.25);
+            border: 2px solid rgba(255,255,255,0.8); border-radius: 50%; color: white;
             display: flex; align-items: center; justify-content: center;
-            backdrop-filter: blur(4px); 
-            user-select: none;
-            
-            /* Agar tombol tidak terlalu mepet bawah */
-            margin-bottom: 10px; 
-            
-            /* Efek bayangan agar terlihat timbul */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            font-size: 24px; backdrop-filter: blur(4px); user-select: none;
         }
         .mg-tbtn:active { background: rgba(255,255,255,0.5); transform: scale(0.9); }
 
-        /* --- 6. PETUNJUK KHUSUS PC --- */
         #mg-pc-hint {
             position: absolute; bottom: 10px; width: 100%; text-align: center;
             color: rgba(255,255,255,0.7); font-size: 12px; pointer-events: none;
-            display: none; /* Sembunyi default */
-            text-shadow: 1px 1px 2px black;
+            display: none; text-shadow: 1px 1px 2px black;
         }
 
-        /* --- 7. LOGIKA OTOMATIS (MEDIA QUERY) --- */
-        /* Jika layar mendukung mouse (PC/Laptop), sembunyikan tombol sentuh, munculkan teks PC */
         @media (pointer: fine) {
             #mg-touch { display: none !important; }
             #mg-pc-hint { display: block !important; }
         }
     </style>
+</head>
+<body>
 
+<div id="mg-wrapper" tabindex="0">
     <canvas id="mg-canvas"></canvas>
 
     <div id="mg-hud">
-        <span>LVL: <span id="val-lvl">1</span></span>
-        <span>SKOR: <span id="val-scr">0</span></span>
-        <span style="color:#f1c40f">WAKTU: <span id="val-tm">30</span></span>
-        <span id="hud-lif"></span> </div>
+        <div style="display:flex; gap:15px;">
+            <span>LVL: <span id="val-lvl">1</span></span>
+            <span>SKOR: <span id="val-scr">0</span></span>
+            <span style="color:#f1c40f">WAKTU: <span id="val-tm">60</span></span>
+        </div>
+        <span id="hud-lif"></span> 
+    </div>
 
     <div id="scr-start" class="mg-screen active">
         <h2 class="mg-title">MATH HERO</h2>
         <p>Jawab Soal & Hindari Duri!</p>
-      <p>Alihkan Ke Mode Landscape/Mode Desktop<p>
         <button class="mg-btn" onclick="Game.start()">▶ MULAI MAIN</button>
     </div>
 
@@ -194,12 +169,11 @@
         const ctx = cvs.getContext('2d');
         const wrap = document.getElementById('mg-wrapper');
         let GW=800, GH=450;
-        let state='MENU', lvl=1, scr=0, lif=3, time=30, tick=0;
+        let state='MENU', lvl=1, scr=0, lif=3, time=60, tick=0; // Added Time Vars
         let p = {x:50, y:300, w:30, h:30, vx:0, vy:0, g:false};
         let keys = {l:false, r:false};
         let math = {ans:0, str:"", rem:0};
 
-        // 5 Level Data
         const lvls = [
             { p:[{x:0,y:400,w:800,h:50},{x:300,y:320,w:200,h:20}], h:[], t:{x:720,y:350,k:'EXIT'}, d:2 },
             { p:[{x:0,y:400,w:200,h:50},{x:250,y:350,w:100,h:20},{x:400,y:300,w:100,h:20},{x:600,y:400,w:200,h:50}], h:[], t:{x:750,y:350,k:'EXIT'}, d:4 },
@@ -211,27 +185,26 @@
         function resize() { cvs.width=GW; cvs.height=GH; }
         
         function loop() {
-    if(state !== 'PLAY') return;
-    
-    // --- TAMBAHKAN KODE INI ---
-    tick++;
-    if(tick >= 30) { // Asumsi game berjalan 60 FPS, maka 60 frame = 1 detik
-        tick = 0;
-        time--;
-        updHUD(); // Update tampilan angka
-        if(time <= 0) die(); // Jika waktu habis, panggil fungsi mati
-    }
-    // --------------------------
+            if(state !== 'PLAY') return;
 
-    ctx.clearRect(0,0,GW,GH);
-    // ... (kode sisanya biarkan sama)
+            // --- TIMER LOGIC ---
+            tick++;
+            if(tick >= 60) {
+                tick = 0;
+                time--;
+                updHUD();
+                if(time <= 0) die();
+            }
+
+            ctx.clearRect(0,0,GW,GH);
+
             // Move
             if(keys.r) p.vx+=0.8; if(keys.l) p.vx-=0.8;
             p.vx*=0.85; p.vy+=0.8; p.x+=p.vx; p.y+=p.vy;
 
             // Draw Level
             let l = lvls[lvl-1]; p.g=false;
-            ctx.fillStyle = '#27ae60'; // Platform
+            ctx.fillStyle = '#27ae60';
             l.p.forEach(b => {
                 ctx.fillRect(b.x, b.y, b.w, b.h);
                 if(p.x<b.x+b.w && p.x+p.w>b.x && p.y<b.y+b.h && p.y+p.h>b.y) {
@@ -259,7 +232,7 @@
 
             // Player
             ctx.fillStyle = '#2980b9'; ctx.fillRect(p.x, p.y, p.w, p.h);
-            ctx.fillStyle = '#fff'; ctx.fillRect(p.vx>=0?p.x+20:p.x+5, p.y+5, 5, 5); // Mata
+            ctx.fillStyle = '#fff'; ctx.fillRect(p.vx>=0?p.x+20:p.x+5, p.y+5, 5, 5);
 
             if(p.y>GH) die();
             if(p.x<0) p.x=0; if(p.x>GW-p.w) p.x=GW-p.w;
@@ -292,14 +265,14 @@
             document.getElementById('val-lvl').innerText = lvl;
             document.getElementById('val-scr').innerText = scr;
             document.getElementById('val-tm').innerText = time;
-            // Gunakan Unicode untuk Love agar aman
             document.getElementById('hud-lif').innerText = "\u2764".repeat(lif);
         }
 
         return {
             start: function() {
                 wrap.focus(); Snd.init(); Snd.music(true);
-                lvl=1; scr=0; lif=3; time=30; tick=0; p.x=50; p.y=300;
+                lvl=1; scr=0; lif=3; time=60; tick=0; // Reset Time
+                p.x=50; p.y=300;
                 document.querySelectorAll('.mg-screen').forEach(e=>e.classList.remove('active'));
                 state='PLAY'; updHUD(); resize(); loop();
             },
@@ -311,7 +284,7 @@
                     if(math.rem<=0) {
                         document.getElementById('scr-math').classList.remove('active');
                         lvl++; wrap.focus();
-                        time = 30;
+                        time=60; // Reset Time per Level
                         if(lvl>5) {
                             state='END'; Snd.music(false); Snd.sfx.win();
                             document.getElementById('end-scr').innerText = scr;
@@ -332,7 +305,8 @@
                         if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key) && document.activeElement===wrap) e.preventDefault();
                         if(e.key=='ArrowRight') keys.r=true;
                         if(e.key=='ArrowLeft') keys.l=true;
-                        if(e.key==' '||e.key=='ArrowUp') if(p.g){p.vy=-20;p.g=false;Snd.sfx.jump();}
+                        // JUMP HIGHER (PC)
+                        if(e.key==' '||e.key=='ArrowUp') if(p.g){p.vy=-18;p.g=false;Snd.sfx.jump();}
                     }
                 });
                 window.addEventListener('keyup', e=>{
@@ -342,7 +316,8 @@
                 const tB = (id,k,j)=>{
                     let el=document.getElementById(id);
                     if(el) {
-                        el.addEventListener('touchstart', e=>{e.preventDefault(); if(j&&p.g){p.vy=-20;p.g=false;Snd.sfx.jump();}else keys[k]=true;});
+                        // JUMP HIGHER (MOBILE)
+                        el.addEventListener('touchstart', e=>{e.preventDefault(); if(j&&p.g){p.vy=-18;p.g=false;Snd.sfx.jump();}else keys[k]=true;});
                         el.addEventListener('touchend', e=>{e.preventDefault(); if(!j)keys[k]=false;});
                     }
                 }
@@ -354,3 +329,6 @@
     setTimeout(Game.bind, 500);
     </script>
 </div>
+
+</body>
+</html>
